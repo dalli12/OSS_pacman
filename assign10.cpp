@@ -68,21 +68,58 @@ void init(void){
 
 //Method to draw the obstacle course and the walls
 void drawLaberynth(){
-	glColor3f(1.0, 1.0, 1.0);
-	//Border
-	for (int i = 0; i < border.size(); i = i + 4){
-		glRectf(border.at(i) * squareSize, border.at(i + 1)*squareSize, border.at(i + 2)*squareSize, border.at(i + 3)*squareSize);
+	//Border1
+	for (int i = 0; i < border.size(); i = i + 8)
+	{
+		//glRectf(border.at(i) * squareSize, border.at(i + 1)*squareSize, border.at(i + 2)*squareSize, border.at(i + 3)*squareSize);
+		glPushMatrix();
+		glTranslatef((border.at(i)*squareSize + border.at(i+2)*squareSize)/2.0, (border.at(i+1)*squareSize + border.at(i+3)*squareSize)/2.0, 50);
+		glScalef(15, 1, 1); //x축으로 긴 직육면체
+		glColor3f(1.0, 1.0, 1.0); glutSolidCube(50);
+		glColor3f(0, 0, 0); glutWireCube(50);
+		glPopMatrix();
+	}
+	//Border2
+	for (int i = 4; i < border.size(); i = i + 8)
+	{
+		//glRectf(border.at(i) * squareSize, border.at(i + 1)*squareSize, border.at(i + 2)*squareSize, border.at(i + 3)*squareSize);
+		glPushMatrix();
+		glTranslatef((border.at(i)*squareSize + border.at(i + 2)*squareSize) / 2.0, (border.at(i + 1)*squareSize + border.at(i + 3)*squareSize) / 2.0, 50);
+		glScalef(1, 15, 1); //y축으로 긴 직육면체
+		glColor3f(1.0, 1.0, 1.0); glutSolidCube(50);
+		glColor3f(0, 0, 0); glutWireCube(50);
+		glPopMatrix();
 	}
 
+
+	glColor3f(1, 1, 1);
 	//Obstacles
-	for (int j = 0; j < obstaclesBottom.size(); j = j + 4){
-		glRectf(obstaclesBottom.at(j) * squareSize, obstaclesBottom.at(j + 1)*squareSize, obstaclesBottom.at(j + 2)*squareSize, obstaclesBottom.at(j + 3)*squareSize);
-	}
-	for (int k = 0; k < obstaclesMiddle.size(); k = k + 4){
-		glRectf(obstaclesMiddle.at(k) * squareSize, obstaclesMiddle.at(k + 1)*squareSize, obstaclesMiddle.at(k + 2)*squareSize, obstaclesMiddle.at(k + 3)*squareSize);
-	}
-	for (int p = 0; p < obstaclesTop.size(); p = p + 4){
+	//for (int j = 0; j < obstaclesBottom.size(); j = j + 4)
+	//{
+	//	glRectf(obstaclesBottom.at(j) * squareSize, obstaclesBottom.at(j + 1)*squareSize, obstaclesBottom.at(j + 2)*squareSize, obstaclesBottom.at(j + 3)*squareSize);
+	//	/*glPushMatrix();
+	//	glTranslatef((obstaclesBottom.at(j)*squareSize + obstaclesBottom.at(j + 2)*squareSize) / 2.0, (obstaclesBottom.at(j + 1)*squareSize + obstaclesBottom.at(j + 3)*squareSize) / 2.0, 25);
+	//	glColor3f(1.0, 1.0, 1.0); glutSolidCube(50);
+	//	glColor3f(0, 0, 0); glutWireCube(50);
+	//	glPopMatrix();*/
+	//}
+	//for (int k = 0; k < obstaclesMiddle.size(); k = k + 4)
+	//{
+	//	//glRectf(obstaclesMiddle.at(k) * squareSize, obstaclesMiddle.at(k + 1)*squareSize, obstaclesMiddle.at(k + 2)*squareSize, obstaclesMiddle.at(k + 3)*squareSize);
+	//	glPushMatrix();
+	//	glTranslatef((obstaclesMiddle.at(k)*squareSize + obstaclesMiddle.at(k + 2)*squareSize) / 2.0, (obstaclesMiddle.at(k + 1)*squareSize + obstaclesMiddle.at(k + 3)*squareSize) / 2.0, 25);
+	//	glColor3f(1.0, 1.0, 1.0); glutSolidCube(50);
+	//	glColor3f(0, 0, 0); glutWireCube(50);
+	//	glPopMatrix();
+	//}
+	for (int p = 0; p < obstaclesTop.size(); p = p + 4)
+	{
 		glRectf(obstaclesTop.at(p) * squareSize, obstaclesTop.at(p + 1)*squareSize, obstaclesTop.at(p + 2)*squareSize, obstaclesTop.at(p + 3)*squareSize);
+		/*glPushMatrix();
+		glTranslatef((obstaclesTop.at(p)*squareSize + obstaclesTop.at(p + 2)*squareSize) / 2.0, (obstaclesTop.at(p + 1)*squareSize + obstaclesTop.at(p + 3)*squareSize) / 2.0, 25);
+		glColor3f(1.0, 1.0, 1.0); glutSolidCube(50);
+		glColor3f(0, 0, 0); glutWireCube(50);
+		glPopMatrix();*/
 	}
 }
 
@@ -115,10 +152,10 @@ void drawFood(float pacmanX, float pacmanY){
 	//draw all the food avilable
 	for (int j = 0; j < food.size(); j = j + 2)
 	{
-		glPushMatrix();
 		//glVertex2f(food.at(j)*squareSize, food.at(j + 1)*squareSize);
+		glPushMatrix();
 		glTranslatef(food.at(j)*squareSize, food.at(j + 1)*squareSize, 0);
-		glColor3f(1.0, 1.0, 1.0); glutSolidSphere(10, 30, 30);
+		glColor3f(1.0, 1.0, 1.0); glutSolidSphere(10, 20, 20);
 		glColor3f(0, 0, 0); glutWireSphere(10, 5, 5);
 		glPopMatrix();
 	}
