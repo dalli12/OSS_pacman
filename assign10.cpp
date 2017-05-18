@@ -6,12 +6,13 @@
 #include <vector>
 #include <deque>
 #include <windows.h>
-#include <GL/glut.h>
+#include <glut.h>
 #include <iostream>
 #include <string>
 #define _USE_MATH_DEFINES
 #include <math.h>
 using namespace std;
+
 
 static bool replay = false; //check if starts a new game
 static bool over = true; //check for the game to be over
@@ -33,6 +34,10 @@ static deque<float> food = { 1.5, 1.5, 1.5, 2.5, 1.5, 3.5, 1.5, 4.5, 1.5, 5.5, 1
 static vector<vector<bool>> bitmap; // 2d image of which squares are blocked and which are clear for pacman to move in 
 bool* keyStates = new bool[256]; // record of all keys pressed 
 int points = 0; // total points collected
+
+//sojeong
+static GLdouble viewer[] = { 0, 0, 1 }; // initial viewer location
+
 
 //Initializes the game with the appropiate information 
 void init(void){
@@ -107,10 +112,15 @@ void drawFood(float pacmanX, float pacmanY){
 	food.swap(temp);
 	glPointSize(5.0);
 	glBegin(GL_POINTS);
-	glColor3f(1.0, 1.0, 1.0);
 	//draw all the food avilable
-	for (int j = 0; j < food.size(); j = j + 2){
-		glVertex2f(food.at(j)*squareSize, food.at(j + 1)*squareSize);
+	for (int j = 0; j < food.size(); j = j + 2)
+	{
+		glPushMatrix();
+		//glVertex2f(food.at(j)*squareSize, food.at(j + 1)*squareSize);
+		glTranslatef(food.at(j)*squareSize, food.at(j + 1)*squareSize, 0);
+		glColor3f(1.0, 1.0, 1.0); glutSolidSphere(10, 30, 30);
+		glColor3f(0, 0, 0); glutWireSphere(10, 5, 5);
+		glPopMatrix();
 	}
 	glEnd();
 }
@@ -221,8 +231,20 @@ void updateMonster(float* monster, int id){
 }
 
 //Method to set the pressed key
-void keyPressed(unsigned char key, int x, int y){
+void keyPressed(unsigned char key, int x, int y)
+{
 	keyStates[key] = true;
+
+	//viewer 이동(카메라의 위치 변경)
+	if (key == 'x') viewer[0] -= 0.1;
+	if (key == 'X') viewer[0] += 0.1;
+	if (key == 'y') viewer[1] -= 0.1;
+	if (key == 'Y') viewer[1] += 0.1;
+	if (key == 'z') viewer[2] -= 0.1;
+	if (key == 'Z') viewer[2] += 0.1;
+	printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
+
+	glutPostRedisplay();
 }
 
 //Method to unset the released key
@@ -408,7 +430,11 @@ void welcomeScreen(){
 }
 
 //Method to display the screen and its elements
-void display(){
+void display()
+{
+	glLoadIdentity();
+	gluLookAt(viewer[0], viewer[1], viewer[2], 0, 0, 0, 0, 1, 0);
+
 	if (points == 1){
 		over = false;
 	}
@@ -444,7 +470,7 @@ void reshape(int w, int h){
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glOrtho(0, 750, 750, 0, -1.0, 1.0);
+	glOrtho(0, 750, 750, 0, -750, 750);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -468,6 +494,7 @@ int main(int argc, char** argv){
 
 	//run the game
 	init();
+
 	glutMainLoop();
 	return 0;
 }
