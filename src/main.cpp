@@ -142,8 +142,9 @@ void updateGhost(Ghost *ghost){
 void keyPressed(unsigned char key, int x, int y)
 {
 	keyStates[key] = true;
+  
+  //The direction the camera looks
 
-	//The direction the camera looks
 	if (key == 'x') viewer[0] -= 0.1;
 	if (key == 'X') viewer[0] += 0.1;
 	if (key == 'y') viewer[1] -= 0.1;
@@ -152,7 +153,8 @@ void keyPressed(unsigned char key, int x, int y)
 	if (key == 'Z') viewer[2] += 0.1;
 	printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
     
-	glutPostRedisplay();
+  glutPostRedisplay();
+  
 }
 
 //Method to unset the released key
@@ -181,41 +183,63 @@ void resetGame(){
 
 //Method to update the movement of the pacman according to the movement keys pressed
 void keyOperations(){
-	//get current position
-	float x = (1.5 + xIncrement) * squareSize;
-	float y = (1.5 + yIncrement) * squareSize;
+	//get current position(Four vertices of rectangle)
+    float left_top[2]={(float)(1.1 + xIncrement) * squareSize, (float)(1.1 + yIncrement) * squareSize};
+    float left_bottom[2]={(float)(1.1 + xIncrement) * squareSize, (float)(1.9 + yIncrement) * squareSize};
+    float right_top[2]={(float)((1.9 + xIncrement) * squareSize), (float)((1.1 + yIncrement) * squareSize)};
+    float right_bottom[2]={(float)((1.9 + xIncrement) * squareSize), (float)((1.9 + yIncrement) * squareSize)};
 	//update according to keys pressed
 	if (keyStates['a']){
-		x -= 2;
-		int x1Quadrant = (int)((x - 25.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at(x1Quadrant).at((int)y / squareSize)){
-			xIncrement -= 2 / squareSize;
-			rotation = 2;
-		}
-	}
+        left_top[0] -= 2;
+        left_bottom[0] -= 2;
+        
+        int x1Quadrant = (int)((left_top[0]) / squareSize);
+        if (!bitmap.at(x1Quadrant).at((int)left_top[1] / squareSize)){
+            x1Quadrant = (int)((left_bottom[0]) / squareSize);
+            if (!bitmap.at(x1Quadrant).at((int)left_bottom[1] / squareSize)){
+                xIncrement -= 2 / squareSize;
+                rotation = 2;
+            }
+        }
+    }
 	if (keyStates['d']){
-		x += 2;
-		int x2Quadrant = (int)((x + 25.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at(x2Quadrant).at((int)y / squareSize)){
-			xIncrement += 2 / squareSize;
-			rotation = 0;
+        right_top[0]+=2;
+        right_bottom[0]+=2;
+        
+		int x2Quadrant = (int)((right_top[0]) / squareSize);
+		if (!bitmap.at(x2Quadrant).at((int)right_top[1] / squareSize)){
+            x2Quadrant = (int)((right_bottom[0]) / squareSize);
+            if (!bitmap.at(x2Quadrant).at((int)right_bottom[1] / squareSize)){
+                xIncrement += 2 / squareSize;
+                rotation = 0;
+            }
 		}
 	}
 	if (keyStates['w']){
-		y -= 2;
-		int y1Quadrant = (int)((y - 25.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at((int)x / squareSize).at(y1Quadrant)){
-			yIncrement -= 2 / squareSize;
-			rotation = 3;
+        left_top[1]-=2;
+        right_top[1]-=2;
+        
+		int y1Quadrant = (int)((left_top[1]) / squareSize);
+		if (!bitmap.at((int)left_top[0] / squareSize).at(y1Quadrant)){
+            y1Quadrant = (int)((right_top[1]) / squareSize);
+            if (!bitmap.at((int)right_top[0] / squareSize).at(y1Quadrant)){
+                yIncrement -= 2 / squareSize;
+                rotation = 3;
+            }
 		}
 	}
 	if (keyStates['s']){
-		y += 2;
-		int y2Quadrant = (int)((y + 25.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at((int)x / squareSize).at(y2Quadrant)){
-			yIncrement += 2 / squareSize;
-			rotation = 1;
-		}
+        left_bottom[1]+=2;
+        right_bottom[1]+=2;
+        
+        int y1Quadrant = (int)((left_bottom[1]) / squareSize);
+        if (!bitmap.at((int)left_bottom[0] / squareSize).at(y1Quadrant)){
+            y1Quadrant = (int)((right_bottom[1]) / squareSize);
+            if (!bitmap.at((int)right_bottom[0] / squareSize).at(y1Quadrant)){
+                yIncrement += 2 / squareSize;
+                rotation = 1;
+            }
+        }		
 	}
 	if (keyStates[' ']){
 		if (!replay && over){
