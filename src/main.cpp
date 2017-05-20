@@ -95,7 +95,7 @@ void updateGhost(Ghost *ghost)
 		{
 			ghost->x -= 2 / squareSize;
 		}
-		else 
+		else
 		{
 			int current = ghost->id;
 			do
@@ -109,7 +109,7 @@ void updateGhost(Ghost *ghost)
 		{
 			ghost->x += 2 / squareSize;
 		}
-		else 
+		else
 		{
 			int current = ghost->id;
 			do
@@ -123,7 +123,7 @@ void updateGhost(Ghost *ghost)
 		{
 			ghost->y -= 2 / squareSize;
 		}
-		else 
+		else
 		{
 			int current = ghost->id;
 			do
@@ -137,7 +137,7 @@ void updateGhost(Ghost *ghost)
 		{
 			ghost->y += 2 / squareSize;
 		}
-		else 
+		else
 		{
 			int current = ghost->id;
 			do
@@ -323,7 +323,7 @@ void resultsDisplay()
 		while (*message)
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
 	}
-	else 
+	else
 	{
 		//Lost
 		char* message = "*************************";
@@ -401,7 +401,7 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//왼쪽 화면
+	//Left screen(3D and first person view)
 	glLoadIdentity();
 	gluLookAt(viewer[0], viewer[1], viewer[2], 0, 0, 0, 0, 1, 0);
 
@@ -411,7 +411,7 @@ void display()
 	}
 
 	keyOperations();
-	
+
 	gameOver();
 
 	if (replay)
@@ -449,13 +449,13 @@ void display()
 		welcomeScreen();
 	}
 
-	//오른쪽 화면
-	glPushMatrix(); //루트 저장
+	//Right screen(2D(Actually draw 3D, so I think it may be modified) and third person view)
+	glPushMatrix(); //Save root
 
 	glLoadIdentity();
-	gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); //고정
+	gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); //Fixed the viewer
 
-	glTranslatef(750, 0, 0); //x축으로 750만큼 이동
+	glTranslatef(750, 0, 0); //Move by 750 on the x axis
 
 	if (points == 1)
 	{
@@ -490,38 +490,33 @@ void display()
 			Sleep(10);
 			playSound(1);
 		}
-		else
-		{
-			//
-		}
-	}
-	else
-	{
-		//
 	}
 
-	glPopMatrix(); //루트로
+	glPopMatrix(); //Go to Root
 
 	glutSwapBuffers();
 }
 
 //Methdo to reshape the game is the screen size changes
-void reshape(int w, int h){
+void reshape(int w, int h) 
+{
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glOrtho(0, 750*2, 750, 0, -750, 750);
+	glOrtho(0, 750 * 2, 750, 0, -750, 750);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
 
 //Main functions that controls the running of the game
-int main(int argc, char** argv){
+int main(int argc, char** argv) 
+{
 	//initialize and create the screen
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(750*2, 750);
+	glutInitWindowSize(750 * 2, 750);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("PACMAN - by Patricia Terol");
 
@@ -535,7 +530,9 @@ int main(int argc, char** argv){
 	//run the game
 	glEnable(GL_DEPTH_TEST);
 	init();
+
 	glutMainLoop();
+
 	return 0;
 }
 
