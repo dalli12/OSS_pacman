@@ -10,17 +10,17 @@
 class Pacman
 {
 private:
-	float squareSize;
+    float squareSize;
 public:
-	float x, y;
-
-	Pacman();
-	~Pacman();
-
-	void setPacman(float x, float y);
-
-	//Method to draw the pacman character through consicutive circle algorithm
-	void drawPacman(float rotation);
-
+    float x, y;
+    
+    Pacman();
+    ~Pacman();
+    
+    void setPacman(float x, float y);
+    
+    //Method to draw the pacman character through consicutive circle algorithm
+    void drawPacman(float rotation);
+    
 };
 #endif

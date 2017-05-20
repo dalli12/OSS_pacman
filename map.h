@@ -13,15 +13,14 @@ using namespace std;
 class Map
 {
 private:
-	float squareSize;
-
+    float squareSize;
+    
 public:
-
-	Map();
-	~Map();
-
-	//Method to draw the obstacle course, the floor and the walls
-	void drawLabyrinth();
+    Map();
+    ~Map();
+    
+    //Method to draw the obstacle course, the floor and the walls
+    void drawLabyrinth();
     void drawFloor();
 };
 #endif

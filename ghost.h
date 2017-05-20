@@ -13,19 +13,19 @@ using namespace std;
 class Ghost
 {
 private:
-	float squareSize;
-
+    float squareSize;
+    
 public:
-	float x, y;
-	int id;
-
-	Ghost(float x, float y, int id);
-	~Ghost();
-
-	void setGhost(float x, float y, int id);
-
-	//Method to draw the monster character through consecutive circles algorithm
-	void drawGhost(float r, float g, float b);
-
+    float x, y;
+    int id;
+    
+    Ghost(float x, float y, int id);
+    ~Ghost();
+    
+    void setGhost(float x, float y, int id);
+    
+    //Method to draw the monster character through consecutive circles algorithm
+    void drawGhost(float r, float g, float b);
+    
 };
 #endif
