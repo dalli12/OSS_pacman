@@ -29,14 +29,28 @@ Map::~Map(void)
 
 }
 
+//Method to draw the floor of map
+void Map::drawFloor()
+{
+    glPushMatrix();
+    
+    glColor3f(0, 0.2, 0.4);
+    glTranslated(15.0/2*squareSize, 15.0/2*squareSize, -5);
+    glScalef(1, 1, 0.01);
+    glutSolidCube(squareSize*15);
+    
+    glPopMatrix();
+}
+
 //Method to draw the obstacle course and the walls
-void Map::drawLabyrinth(){
+void Map::drawLabyrinth()
+{
 	//Border1
 	for (int i = 0; i < border.size(); i = i + 8)
 	{
 		glPushMatrix();
 		glTranslatef((border.at(i)*squareSize + border.at(i + 2)*squareSize) / 2.0, (border.at(i + 1)*squareSize + border.at(i + 3)*squareSize) / 2.0, 25);
-		glScalef(15, 1, 1); //x축으로 긴 직육면체
+		glScalef(15, 1, 1); //Long x-axis cube
 		glColor3f(1.0, 1.0, 1.0); glutSolidCube(50);
 		glColor3f(0, 0, 0); glutWireCube(50);
 		glPopMatrix();
@@ -46,14 +60,15 @@ void Map::drawLabyrinth(){
 	{
 		glPushMatrix();
 		glTranslatef((border.at(i)*squareSize + border.at(i + 2)*squareSize) / 2.0, (border.at(i + 1)*squareSize + border.at(i + 3)*squareSize) / 2.0, 25);
-		glScalef(1, 15, 1); //y축으로 긴 직육면체
+        glScalef(1, 15, 1); //Long y-axis cube
 		glColor3f(1.0, 1.0, 1.0); glutSolidCube(50);
 		glColor3f(0, 0, 0); glutWireCube(50);
 		glPopMatrix();
 	}
 
 	//Obstacles
-	for (int j = 0; j < obstaclesBottom.size(); j = j + 2) {
+	for (int j = 0; j < obstaclesBottom.size(); j = j + 2) 
+	{
 		glPushMatrix();
 		glTranslated(obstaclesBottom.at(j) * squareSize, obstaclesBottom.at(j + 1) * squareSize, 25);
 		glColor3f(0, 0, 0);
@@ -63,7 +78,8 @@ void Map::drawLabyrinth(){
 		glPopMatrix();
 
 	}
-	for (int k = 0; k < obstaclesMiddle.size(); k = k + 2) {
+	for (int k = 0; k < obstaclesMiddle.size(); k = k + 2)
+	{
 		glPushMatrix();
 		glTranslated(obstaclesMiddle.at(k) * squareSize, obstaclesMiddle.at(k + 1) * squareSize, 25);
 		glColor3f(0, 0, 0);
