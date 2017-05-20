@@ -2,7 +2,7 @@
 // Course: CSE 2050
 // Project: assign10
 
-//#include <Windows.h>
+#include <Windows.h>
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
@@ -143,7 +143,7 @@ void keyPressed(unsigned char key, int x, int y)
 {
 	keyStates[key] = true;
 
-	//viewer ¿Ãµø(ƒ´∏ﬁ∂Û¿« ¿ßƒ° ∫Ø∞Ê)
+	//The direction the camera looks
 	if (key == 'x') viewer[0] -= 0.1;
 	if (key == 'X') viewer[0] += 0.1;
 	if (key == 'y') viewer[1] -= 0.1;
@@ -370,7 +370,7 @@ void display(){
 			Clyde.drawGhost(1.0, 0.3, 0.0); //orange
 			Pinky.drawGhost(1.0, 0.0, 0.6); //magenta
 
-			//Sleep(10);
+			Sleep(10);
 			playSound(1);
 			}
 		else {
