@@ -142,8 +142,9 @@ void updateGhost(Ghost *ghost){
 void keyPressed(unsigned char key, int x, int y)
 {
 	keyStates[key] = true;
+  
+  //The direction the camera looks
 
-	//viewer ¿Ãµø(ƒ´∏ﬁ∂Û¿« ¿ßƒ° ∫Ø∞Ê)
 	if (key == 'x') viewer[0] -= 0.1;
 	if (key == 'X') viewer[0] += 0.1;
 	if (key == 'y') viewer[1] -= 0.1;
@@ -152,7 +153,8 @@ void keyPressed(unsigned char key, int x, int y)
 	if (key == 'Z') viewer[2] += 0.1;
 	printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
     
-    glutPostRedisplay();
+  glutPostRedisplay();
+  
 }
 
 //Method to unset the released key
@@ -237,7 +239,7 @@ void keyOperations(){
                 yIncrement += 2 / squareSize;
                 rotation = 1;
             }
-        }
+        }		
 	}
 	if (keyStates[' ']){
 		if (!replay && over){
