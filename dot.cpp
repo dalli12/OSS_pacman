@@ -61,14 +61,18 @@ void Dot::drawDot(float pacmanX, float pacmanY){
         glPushMatrix();
         glTranslatef(dot.at(j)*squareSize, dot.at(j + 1)*squareSize, -1);
         glColor3f(1.0, 1.0, 1.0); glutSolidSphere(10, 30, 30);
-        glColor3f(0, 0, 0); glutWireSphere(10.1, 5, 5); //°ËÁ¤¼± º¸ÀÌ°Ô 10.1·Î
+        glColor3f(0, 0, 0); glutWireSphere(10.1, 5, 5); //Â°Ã‹ÃÂ¤Â¼Â± ÂºÂ¸Ã€ÃŒÂ°Ã” 10.1Â·ÃŽ
         glPopMatrix();
     }
-    
     glEnd();
 }
 
 int Dot::getPoint()
 {
     return this->points;
+}
+
+void Dot::setPoint(int n)
+{
+    this->points = n;
 }

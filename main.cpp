@@ -185,7 +185,7 @@ void keyPressed(unsigned char key, int x, int y)
     if (key == 'z') viewer[2] -= 0.1;
     if (key == 'Z') viewer[2] += 0.1;
     //printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
-
+    
     glutPostRedisplay();
 }
 
@@ -211,6 +211,7 @@ void resetGame()
     Pinky.setGhost(2.5, 13.5, 4);
     
     points = 0;
+    dot.setPoint(0);
     
     for (int i = 0; i < 256; i++)
     {
