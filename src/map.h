@@ -20,7 +20,9 @@ public:
 	~Map();
 
 	//Method to draw the obstacle course, the floor and the walls
-	void drawLabyrinth();
-    void drawFloor();
+	void drawLabyrinth2D();
+	void drawLabyrinth3D();
+
+    void drawFloor3D();
 };
 #endif

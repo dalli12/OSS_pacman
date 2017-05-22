@@ -40,7 +40,32 @@ bool Dot::dotEaten(int x, int y, float pacmanX, float pacmanY)
 	return false;
 	}
 
-void Dot::drawDot(float pacmanX, float pacmanY){
+//Method to draw all the food left and delete the ate one
+void Dot::drawDot2D(float pacmanX, float pacmanY){
+	deque<float> temp;
+	//check if the food has not been eaten
+	for (int i = 0; i < dot.size(); i = i + 2){
+		if (!dotEaten(dot.at(i)*squareSize, dot.at(i + 1)*squareSize, pacmanX, pacmanY)){
+			temp.push_back(dot.at(i));
+			temp.push_back(dot.at(i + 1));
+		}
+		else {
+			playSound(2);
+			points++;
+		}
+	}
+	dot.swap(temp);
+	glPointSize(5.0);
+	glBegin(GL_POINTS);
+	glColor3f(1.0, 1.0, 1.0);
+	//draw all the food avilable
+	for (int j = 0; j < dot.size(); j = j + 2){
+		glVertex2f(dot.at(j)*squareSize, dot.at(j + 1)*squareSize);
+	}
+	glEnd();
+}
+
+void Dot::drawDot3D(float pacmanX, float pacmanY){
 	deque<float> temp;
 	//check if the food has not been eaten
 	for (int i = 0; i < dot.size(); i = i + 2) {

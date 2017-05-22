@@ -29,7 +29,8 @@ public:
 	bool dotEaten(int x, int y, float pacmanX, float pacmanY);
 
 	//Method to draw all the food left and delete the ate one
-	void drawDot(float pacmanX, float pacmanY);
+	void drawDot2D(float pacmanX, float pacmanY);
+	void drawDot3D(float pacmanX, float pacmanY);
 
 	int getPoint();
 

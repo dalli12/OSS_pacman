@@ -22,10 +22,11 @@ public:
 	Ghost(float x, float y, int id);
 	~Ghost();
 
-	void setGhost(float x, float y, int id);
+	void setGhost2D(float x, float y, int id);
 
 	//Method to draw the monster character through consecutive circles algorithm
-	void drawGhost(float r, float g, float b);
+	void drawGhost2D(float r, float g, float b);
+	void drawGhost3D(float r, float g, float b);
 
 };
 #endif

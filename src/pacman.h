@@ -18,10 +18,10 @@ public:
 	Pacman();
 	~Pacman();
 
-	void setPacman(float x, float y, float angle);
+	void setPacman2D(float x, float y, float angle);
 
 	//Method to draw the pacman character through consicutive circle algorithm
-	void drawPacman(float rotation);
+	void drawPacman2D(float rotation);
 
 };
 #endif

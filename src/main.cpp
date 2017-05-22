@@ -102,7 +102,7 @@ void init()
 }
 
 //Method to update the position of the monsters randomly
-void updateGhost(Ghost *ghost)
+void updateGhost2D(Ghost *ghost)
 {
 	//find the current position of the monster
 	int x1Quadrant = (int)((ghost->x - (2 / squareSize)) - (16.0 *cos(360 * M_PI / 180.0)) / squareSize);
@@ -211,10 +211,10 @@ void resetGame()
 
 	rotation = 0;
 
-	Blinky.setGhost(10.5, 8.5, 1);
-	Inky.setGhost(13.5, 1.5, 2);
-	Clyde.setGhost(4.5, 6.5, 3);
-	Pinky.setGhost(2.5, 13.5, 4);
+	Blinky.setGhost2D(10.5, 8.5, 1);
+	Inky.setGhost2D(13.5, 1.5, 2);
+	Clyde.setGhost2D(4.5, 6.5, 3);
+	Pinky.setGhost2D(2.5, 13.5, 4);
 
 	points = 0;
 	dot.setPoint(0);
@@ -432,113 +432,130 @@ void welcomeScreen()
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
 }
 
+void draw2DScreen()
+{
+	map.drawLabyrinth2D();
+	pacman.setPacman2D(1.5 + xIncrement, 1.5 + yIncrement, angle);
+	dot.drawDot2D(pacman.x * squareSize, pacman.y * squareSize);
+	points = dot.getPoint();
+	pacman.drawPacman2D(rotation);
+
+	updateGhost2D(&Blinky);
+	updateGhost2D(&Inky);
+	updateGhost2D(&Clyde);
+	updateGhost2D(&Pinky);
+
+	Blinky.drawGhost2D(1.0, 0.0, 0.0); //red
+	Inky.drawGhost2D(0.0, 1.0, 1.0); //cyan
+	Clyde.drawGhost2D(1.0, 0.3, 0.0); //orange
+	Pinky.drawGhost2D(1.0, 0.0, 0.6); //magenta
+
+	Sleep(10);
+}
+
+void draw3DScreen()
+{
+	map.drawFloor3D();
+	map.drawLabyrinth3D();
+	pacman.setPacman2D(1.5 + xIncrement, 1.5 + yIncrement, angle);
+	dot.drawDot3D(pacman.x * squareSize, pacman.y * squareSize);
+	points = dot.getPoint();
+	pacman.drawPacman2D(rotation);
+
+	updateGhost2D(&Blinky);
+	updateGhost2D(&Inky);
+	updateGhost2D(&Clyde);
+	updateGhost2D(&Pinky);
+
+	Blinky.drawGhost3D(1.0, 0.0, 0.0); //red
+	Inky.drawGhost3D(0.0, 1.0, 1.0); //cyan
+	Clyde.drawGhost3D(1.0, 0.3, 0.0); //orange
+	Pinky.drawGhost3D(1.0, 0.0, 0.6); //magenta
+
+	Sleep(10);
+}
+
 //Method to display the screen and its elements
 void display()
 {
+	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	if (points == 1)
+		over = false;
 
 	//Left screen(3D and first person view)
 	glLoadIdentity();
 	gluLookAt(viewer[0], viewer[1], viewer[2], 0, 0, 0, 0, 1, 0);
 
-	if (points == 1)
-	{
-		over = false;
-	}
 	gameOver();
 	keyOperations();
 
 	//Increaseing the degree of pacman's mouth
 	angle += angle_Increment; //angle's range is 0~45degree
 	if (angle > 45) //change the signal of angle_Increment
-	{
 		angle_Increment = -angle_Increment;
-	}
 	else if (angle < 0)
-	{
 		angle_Increment = -angle_Increment;
-	}
 
 	//call the functions to draw
 	if (replay)
 	{
 		if (!over)
 		{
-			map.drawFloor();
-			map.drawLabyrinth();
-			pacman.setPacman(1.5 + xIncrement, 1.5 + yIncrement, angle);
-			dot.drawDot(pacman.x * squareSize, pacman.y * squareSize);
-			points = dot.getPoint();
-			pacman.drawPacman(rotation);
-
-			updateGhost(&Blinky);
-			updateGhost(&Inky);
-			updateGhost(&Clyde);
-			updateGhost(&Pinky);
-
-			Blinky.drawGhost(1.0, 0.0, 0.0); //red
-			Inky.drawGhost(0.0, 1.0, 1.0); //cyan
-			Clyde.drawGhost(1.0, 0.3, 0.0); //orange
-			Pinky.drawGhost(1.0, 0.0, 0.6); //magenta
-
-			Sleep(10);
 			playSound(1);
+			draw3DScreen();
 		}
 		else
 		{
 			playSound(3);
+			glLoadIdentity();
+			glTranslatef(375, 0, 0);
 			resultsDisplay();
 		}
 	}
 	else
 	{
+		glLoadIdentity();
+		glTranslatef(375, 0, 0);
 		welcomeScreen();
 	}
 
-	//Right screen(2D(Actually draw 3D, so I think it may be modified) and third person view)
+	// Right screen(2D(Actually draw 3D, so I think it may be modified) and third person view)
+	glDisable(GL_DEPTH_TEST);
+
 	glPushMatrix(); //Save root
-
 	glLoadIdentity();
-	gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); //Fixed the viewer
-
 	glTranslatef(750, 0, 0); //Move by 750 on the x axis
-
-	if (points == 1)
-	{
-		over = false;
-	}
 
 	gameOver();
 	keyOperations();
 
+	//call the functions to draw
 	if (replay)
 	{
 		if (!over)
 		{
-			map.drawFloor();
-			map.drawLabyrinth();
-			pacman.setPacman(1.5 + xIncrement, 1.5 + yIncrement, angle);
-			dot.drawDot(pacman.x * squareSize, pacman.y * squareSize);
-			points = dot.getPoint();
-			pacman.drawPacman(rotation);
-
-			updateGhost(&Blinky);
-			updateGhost(&Inky);
-			updateGhost(&Clyde);
-			updateGhost(&Pinky);
-
-			Blinky.drawGhost(1.0, 0.0, 0.0); //red
-			Inky.drawGhost(0.0, 1.0, 1.0); //cyan
-			Clyde.drawGhost(1.0, 0.3, 0.0); //orange
-			Pinky.drawGhost(1.0, 0.0, 0.6); //magenta
-
-			Sleep(10);
 			playSound(1);
+			draw2DScreen();
 		}
+		else
+		{
+			playSound(3);
+			glLoadIdentity();
+			glTranslatef(375, 0, 0);
+			resultsDisplay();
+		}
+	}
+	else
+	{
+		glLoadIdentity();
+		glTranslatef(375, 0, 0);
+		welcomeScreen();
 	}
 
 	glPopMatrix(); //Go to Root
-
+	
 	glutSwapBuffers();
 }
 
@@ -573,7 +590,6 @@ int main(int argc, char** argv)
 	glutKeyboardUpFunc(keyUp);
 
 	//run the game
-	glEnable(GL_DEPTH_TEST);
 	init();
 
 	glutMainLoop();
