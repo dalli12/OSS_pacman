@@ -15,7 +15,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include <Windows.h>
+#include <Windows.h>
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
@@ -48,6 +48,8 @@ int rotation = 0; // orientation of pacman
 float angle = 0; // the angle(degree) of pacman's mouth
 float angle_Increment = 3;
 
+float xx=-21, yy=-3.2, zz=-29;
+
 bool callOnce = false; // call function once
 
 vector<vector<bool>> bitmap; // 2d image of which squares are blocked and which are clear for pacman to move in
@@ -57,9 +59,9 @@ GLdouble viewer[] = { 0, 0, 1 }; // initial viewer location
 
 void viewerInit()
 {
-    viewer[0] = 0;
-    viewer[1] = 0;
-    viewer[2] = 1;
+    viewer[0] = -31;
+    viewer[1] = -5.0;
+    viewer[2] = -29;
 }
 
 //Initializes the game with the appropiate information
@@ -178,14 +180,20 @@ void keyPressed(unsigned char key, int x, int y)
     keyStates[key] = true;
     
     //viewer change with keyboard input
-    if (key == 'x') viewer[0] -= 0.1;
-    if (key == 'X') viewer[0] += 0.1;
-    if (key == 'y') viewer[1] -= 0.1;
-    if (key == 'Y') viewer[1] += 0.1;
-    if (key == 'z') viewer[2] -= 0.1;
-    if (key == 'Z') viewer[2] += 0.1;
-    //printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
-    
+    if (key == 'x') {viewer[0] -= 1; xx--;}
+    if (key == 'X') {viewer[0] += 1; xx++;}
+    if (key == 'y') viewer[1] -= 1;
+    if (key == 'Y') viewer[1] += 1;
+    if (key == 'z') {viewer[2] -= 1; zz--;}
+    if (key == 'Z') {viewer[2] += 1; zz++;}
+    printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
+    if(key == 'i') yy--;
+    if(key == 'k') yy++;
+    if(key == 'j') xx--;
+    if(key == 'l') xx++;
+    if(key == 'u') zz--;
+    if(key == 'o') zz++;
+    printf("viewer : %f, %f, %f\n", xx, yy, zz);
     glutPostRedisplay();
 }
 
@@ -278,7 +286,7 @@ void keyOperations()
         }
         else if (replay && over)
         {
-            replay = false;
+            replay = false; 
         }
     }
 }
@@ -430,7 +438,7 @@ void display()
     
     //Left screen(3D and first person view)
     glLoadIdentity();
-    gluLookAt(viewer[0], viewer[1], viewer[2], 0, 0, 0, 0, 1, 0);
+    gluLookAt(viewer[0], viewer[1], viewer[2], xx, yy, zz, 0, 1, 0);
     
     if (points == 1)
     {
@@ -457,6 +465,11 @@ void display()
     {
         if (!over)
         {
+            glPushMatrix();
+            
+            glRotated(90, 1, 0, 0);
+            glScalef(0.1, 0.1, 0.1);
+            glTranslated(-375, -375, -5);
             map.drawFloor();
             map.drawLabyrinth();
             pacman.setPacman(1.5 + xIncrement, 1.5 + yIncrement, angle);
@@ -474,7 +487,8 @@ void display()
             Clyde.drawGhost(1.0, 0.3, 0.0); //orange
             Pinky.drawGhost(1.0, 0.0, 0.6); //magenta
             
-            //Sleep(10);
+            glPopMatrix();
+            Sleep(10);
             playSound(1);
         }
         else
@@ -505,6 +519,7 @@ void display()
     
     gameOver();
     
+    
     if (replay)
     {
         if (!over)
@@ -526,7 +541,7 @@ void display()
             Clyde.drawGhost(1.0, 0.3, 0.0); //orange
             Pinky.drawGhost(1.0, 0.0, 0.6); //magenta
             
-            //Sleep(10);
+            Sleep(10);
             playSound(1);
         }
     }
@@ -542,10 +557,10 @@ void reshape(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-    glOrtho(0, 750 * 2, 750, 0, -750, 750);
-    
+    glFrustum(-5, 5, 5, -5, 2, 20);
+    //glOrtho(0, 750 * 2, 750, 0, -750, 750);
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    //glLoadIdentity();
 }
 
 
@@ -555,9 +570,10 @@ int main(int argc, char** argv)
     //initialize and create the screen
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(750 * 2, 750);
+    glutInitWindowSize(750, 750);
     glutInitWindowPosition(0, 0);
     glutCreateWindow("PACMAN - by Patricia Terol");
+    
     
     //define all the control functions
     glutDisplayFunc(display);
