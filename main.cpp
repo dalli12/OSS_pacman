@@ -48,7 +48,7 @@ int rotation = 0; // orientation of pacman
 float angle = 0; // the angle(degree) of pacman's mouth
 float angle_Increment = 3;
 
-float xx=-21, yy=-3.2, zz=-29;
+float xx=-21, yy=-3.2, zz=-30;
 
 bool callOnce = false; // call function once
 
@@ -61,7 +61,8 @@ void viewerInit()
 {
     viewer[0] = -31;
     viewer[1] = -5.0;
-    viewer[2] = -29;
+    viewer[2] = -30;
+    xx=-21, yy=-3.2, zz=-30;
 }
 
 //Initializes the game with the appropiate information
@@ -169,8 +170,6 @@ void updateGhost(Ghost *ghost)
             break;
     }
     
-    //printf("%f %f\n", ghost.x, ghost.y);
-    
     glutPostRedisplay();
 }
 
@@ -180,23 +179,15 @@ void keyPressed(unsigned char key, int x, int y)
     keyStates[key] = true;
     
     //viewer change with keyboard input
-    if (key == 'x') {viewer[0] -= 1; xx--;}
-    if (key == 'X') {viewer[0] += 1; xx++;}
+    if (key == 'x') viewer[0] -= 1;
+    if (key == 'X') viewer[0] += 1;
     if (key == 'y') viewer[1] -= 1;
     if (key == 'Y') viewer[1] += 1;
-    if (key == 'z') {viewer[2] -= 1; zz--;}
-    if (key == 'Z') {viewer[2] += 1; zz++;}
-    printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
-    if(key == 'i') yy--;
-    if(key == 'k') yy++;
-    if(key == 'j') xx--;
-    if(key == 'l') xx++;
-    if(key == 'u') zz--;
-    if(key == 'o') zz++;
-    printf("viewer : %f, %f, %f\n", xx, yy, zz);
+    if (key == 'z') viewer[2] -= 1;
+    if (key == 'Z') viewer[2] += 1;
+    
     glutPostRedisplay();
 }
-
 //Method to unset the released key
 void keyUp(unsigned char key, int x, int y)
 {
@@ -245,6 +236,14 @@ void keyOperations()
         {
             xIncrement -= 2 / squareSize;
             rotation = 2;
+            
+            //camera direction set
+            zz=viewer[2];
+            xx = viewer[0] - 10;
+            
+            //camera location set
+            viewer[0] -= 0.2;
+            xx -=0.2;
         }
     }
     if (keyStates['d'])
@@ -255,6 +254,15 @@ void keyOperations()
         {
             xIncrement += 2 / squareSize;
             rotation = 0;
+            
+            //camera direction set
+            zz=viewer[2];
+            xx = viewer[0] +10;
+            
+            //camera location set
+            viewer[0] += 0.2;
+            xx +=0.2;
+
         }
     }
     if (keyStates['w'])
@@ -265,6 +273,14 @@ void keyOperations()
         {
             yIncrement -= 2 / squareSize;
             rotation = 3;
+            
+            //camera direction set
+            zz=viewer[2] - 10;
+            xx = viewer[0];
+            
+            //camera location set
+            viewer[2] -= 0.2;
+            zz -=0.2;
         }
     }
     if (keyStates['s'])
@@ -275,6 +291,14 @@ void keyOperations()
         {
             yIncrement += 2 / squareSize;
             rotation = 1;
+            
+            //camera direction set
+            zz=viewer[2] + 10;
+            xx = viewer[0];
+            
+            //camera location set
+            viewer[2] += 0.2;
+            zz +=0.2;
         }
     }
     if (keyStates[' '])
@@ -434,6 +458,7 @@ void welcomeScreen()
 //Method to display the screen and its elements
 void display()
 {
+    glViewport(0, 0, (GLsizei)750, (GLsizei)750);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     //Left screen(3D and first person view)
@@ -467,6 +492,7 @@ void display()
         {
             glPushMatrix();
             
+            //glTranslated(-375, -375, -5);
             glRotated(90, 1, 0, 0);
             glScalef(0.1, 0.1, 0.1);
             glTranslated(-375, -375, -5);
@@ -505,6 +531,8 @@ void display()
     //Right screen(2D(Actually draw 3D, so I think it may be modified) and third person view)
     glPushMatrix(); //Save root
     
+    glViewport(750, 0, (GLsizei)750*2, (GLsizei)750);
+    //glOrtho(750, 750 * 2, 750, 0, -750, 750);
     glLoadIdentity();
     gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); //Fixed the viewer
     
@@ -556,11 +584,11 @@ void reshape(int w, int h)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+    //glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glFrustum(-5, 5, 5, -5, 2, 20);
     //glOrtho(0, 750 * 2, 750, 0, -750, 750);
     glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity();
+    glLoadIdentity();
 }
 
 
@@ -570,7 +598,7 @@ int main(int argc, char** argv)
     //initialize and create the screen
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(750, 750);
+    glutInitWindowSize(750 * 2, 750);
     glutInitWindowPosition(0, 0);
     glutCreateWindow("PACMAN - by Patricia Terol");
     
@@ -581,7 +609,6 @@ int main(int argc, char** argv)
     glutIdleFunc(display);
     glutKeyboardFunc(keyPressed);
     glutKeyboardUpFunc(keyUp);
-    
     //run the game
     glEnable(GL_DEPTH_TEST);
     init();
@@ -590,3 +617,4 @@ int main(int argc, char** argv)
     
     return 0;
 }
+
