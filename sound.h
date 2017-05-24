@@ -1,8 +1,8 @@
 #ifndef _SOUND_H
 #define _SOUND_H
 
-//#include <Windows.h>
-#include "SDL_mixer.h"
+#include <Windows.h>
+#include <SDL_mixer.h>
 
 void loadingSounds();
 

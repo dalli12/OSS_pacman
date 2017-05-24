@@ -23,9 +23,9 @@ void loadingSounds()
         return;
     }
     
-    begin = Mix_LoadMUS("/sound/beginning.wav");
-    eat = Mix_LoadWAV("/sound/eating.wav");
-    death = Mix_LoadWAV("/sound/death.wav");
+    begin = Mix_LoadMUS("sound/beginning.wav");
+    eat = Mix_LoadWAV("sound/eating.wav");
+    death = Mix_LoadWAV("sound/death.wav");
 }
 
 void setVolume(Mix_Chunk *chunk, float volume)
