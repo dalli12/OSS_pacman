@@ -23,8 +23,9 @@ public:
 	Dot();
 	~Dot();
 
-	void dotInit();
-
+	void dotInit2();
+	void dotInit3();
+	
 	//Method to check if the food has been eaten
 	bool dotEaten(int x, int y, float pacmanX, float pacmanY);
 
