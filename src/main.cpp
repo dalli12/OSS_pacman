@@ -45,6 +45,7 @@ Map map;
 Pacman pacman;
 Dot dot;
 
+GLsizei ww, hh; //screen size
 bool replay = false; //check if starts a new game
 bool over = true; //check for the game to be over
 float squareSize = 50.0; //size of one square on the game
@@ -54,21 +55,23 @@ int rotation = 0; // orientation of pacman
 float angle = 0; // the angle(degree) of pacman's mouth
 float angle_Increment = 3;
 
+float xx = -20, yy = -3.2, zz = -30;
+
 bool callOnce = false; // call function once
 
-vector<vector<bool>> bitmap; // 2d image of which squares are blocked and which are clear for pacman to move in 
-bool* keyStates = new bool[256]; // record of all keys pressed 
+bool* keyStates = new bool[256]; // record of all keys pressed
 int points = 0; // total points collected
 GLdouble viewer[] = { 0, 0, 1 }; // initial viewer location
 
 void viewerInit()
 {
-	viewer[0] = 0;
-	viewer[1] = 0;
-	viewer[2] = 1;
+	viewer[0] = -30;
+	viewer[1] = -5.0;
+	viewer[2] = -30;
+	xx = -21, yy = -3.2, zz = -30;
 }
 
-//Initializes the game with the appropiate information 
+//Initializes the game with the appropiate information
 void init()
 {
 	//clear screen
@@ -80,23 +83,6 @@ void init()
 	{
 		keyStates[i] = false;
 	}
-
-	//fill the bitmap with the obstacles
-	bitmap.push_back({ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true });
-	bitmap.push_back({ true, false, false, false, false, false, false, false, false, false, false, false, false, false, true });
-	bitmap.push_back({ true, false, true, true, true, true, false, true, true, false, true, true, true, false, true });
-	bitmap.push_back({ true, false, false, false, false, true, false, true, false, false, false, false, true, false, true });
-	bitmap.push_back({ true, false, true, true, false, false, false, false, false, true, true, false, false, false, true });
-	bitmap.push_back({ true, false, false, true, true, false, true, true, true, true, false, false, true, false, true });
-	bitmap.push_back({ true, true, false, false, false, false, true, false, true, true, false, true, true, false, true });
-	bitmap.push_back({ true, true, true, true, true, false, false, false, true, false, false, false, false, false, true });
-	bitmap.push_back({ true, true, false, false, false, false, true, false, true, true, false, true, true, false, true });
-	bitmap.push_back({ true, false, false, true, true, false, true, true, true, true, false, false, true, false, true });
-	bitmap.push_back({ true, false, true, true, false, false, false, false, false, true, true, false, false, false, true });
-	bitmap.push_back({ true, false, false, false, false, true, false, true, false, false, false, false, true, false, true });
-	bitmap.push_back({ true, false, true, true, true, true, false, true, true, false, true, true, true, false, true });
-	bitmap.push_back({ true, false, false, false, false, false, false, false, false, false, false, false, false, false, true });
-	bitmap.push_back({ true, true, true, true, true, true, true, true, true, true, true, true, true, true, true });
 
 	loadingSounds();
 }
@@ -114,7 +100,7 @@ void updateGhost(Ghost *ghost)
 	switch (ghost->id)
 	{
 	case 1:
-		if (!bitmap.at(x1Quadrant).at((int)ghost->y))
+		if (!map.bitmap.at(x1Quadrant).at((int)ghost->y))
 		{
 			ghost->x -= 2 / squareSize;
 		}
@@ -128,7 +114,7 @@ void updateGhost(Ghost *ghost)
 		}
 		break;
 	case 2:
-		if (!bitmap.at(x2Quadrant).at((int)ghost->y))
+		if (!map.bitmap.at(x2Quadrant).at((int)ghost->y))
 		{
 			ghost->x += 2 / squareSize;
 		}
@@ -142,7 +128,7 @@ void updateGhost(Ghost *ghost)
 		}
 		break;
 	case 3:
-		if (!bitmap.at((int)ghost->x).at(y1Quadrant))
+		if (!map.bitmap.at((int)ghost->x).at(y1Quadrant))
 		{
 			ghost->y -= 2 / squareSize;
 		}
@@ -156,7 +142,7 @@ void updateGhost(Ghost *ghost)
 		}
 		break;
 	case 4:
-		if (!bitmap.at((int)ghost->x).at(y2Quadrant))
+		if (!map.bitmap.at((int)ghost->x).at(y2Quadrant))
 		{
 			ghost->y += 2 / squareSize;
 		}
@@ -173,8 +159,6 @@ void updateGhost(Ghost *ghost)
 		break;
 	}
 
-	//printf("%f %f\n", ghost.x, ghost.y);
-
 	glutPostRedisplay();
 }
 
@@ -184,17 +168,15 @@ void keyPressed(unsigned char key, int x, int y)
 	keyStates[key] = true;
 
 	//viewer change with keyboard input
-	if (key == 'x') viewer[0] -= 0.1;
-	if (key == 'X') viewer[0] += 0.1;
-	if (key == 'y') viewer[1] -= 0.1;
-	if (key == 'Y') viewer[1] += 0.1;
-	if (key == 'z') viewer[2] -= 0.1;
-	if (key == 'Z') viewer[2] += 0.1;
-	//printf("viewer : %f, %f, %f\n", viewer[0], viewer[1], viewer[2]);
+	if (key == 'x') viewer[0] -= 1;
+	if (key == 'X') viewer[0] += 1;
+	if (key == 'y') viewer[1] -= 1;
+	if (key == 'Y') viewer[1] += 1;
+	if (key == 'z') viewer[2] -= 1;
+	if (key == 'Z') viewer[2] += 1;
 
 	glutPostRedisplay();
 }
-
 //Method to unset the released key
 void keyUp(unsigned char key, int x, int y)
 {
@@ -204,27 +186,59 @@ void keyUp(unsigned char key, int x, int y)
 //Method to reset all the variable necessaries to start the game again
 void resetGame()
 {
-	over = false;
-
-	xIncrement = 0;
-	yIncrement = 0;
-
-	rotation = 0;
-
-	Blinky.setGhost(10.5, 8.5, 1);
-	Inky.setGhost(13.5, 1.5, 2);
-	Clyde.setGhost(4.5, 6.5, 3);
-	Pinky.setGhost(2.5, 13.5, 4);
-
-	points = 0;
-	dot.setPoint(0);
-
-	for (int i = 0; i < 256; i++)
+	if (map.level == 2)
 	{
-		keyStates[i] = false;
+		over = false;
+
+		xIncrement = 0;
+		yIncrement = 0;
+
+		rotation = 0;
+
+		Blinky.setGhost(8.5, 8.5, 1);
+		Inky.setGhost(11.5, 1.5, 2);
+		Clyde.setGhost(3.5, 4.5, 3);
+		Pinky.setGhost(2.5, 11.5, 4);
+
+		points = 0;
+		dot.setPoint(0);
+
+		for (int i = 0; i < 256; i++)
+		{
+			keyStates[i] = false;
+		}
+
+		map.mapInit2();
+		dot.dotInit2();
 	}
 
-	dot.dotInit();
+	else if (map.level == 3)
+	{
+		over = false;
+
+		xIncrement = 0;
+		yIncrement = 0;
+
+		rotation = 0;
+
+		Blinky.setGhost(10.5, 8.5, 1);
+		Inky.setGhost(13.5, 1.5, 2);
+		Clyde.setGhost(4.5, 6.5, 3);
+		Pinky.setGhost(2.5, 13.5, 4);
+
+		points = 0;
+		dot.setPoint(0);
+
+		for (int i = 0; i < 256; i++)
+		{
+			keyStates[i] = false;
+		}
+
+		map.mapInit3();
+		dot.dotInit3();
+	}
+
+
 }
 
 //Method to update the movement of the pacman according to the movement keys pressed
@@ -235,44 +249,77 @@ void keyOperations()
 	float y = (1.5 + yIncrement) * squareSize;
 
 	//update according to keys pressed
-	if (keyStates['a']|| keyStates['A'])
+	if (keyStates['a'])
 	{
 		x -= 2;
 		int x1Quadrant = (int)((x - 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at(x1Quadrant).at((int)y / squareSize))
+		if (!map.bitmap.at(x1Quadrant).at((int)y / squareSize))
 		{
 			xIncrement -= 2 / squareSize;
 			rotation = 2;
+
+			//camera direction set
+			zz = viewer[2];
+			xx = viewer[0] - 10;
+
+			//camera location set
+			viewer[0] -= 0.2;
+			xx -= 0.2;
 		}
 	}
-	if (keyStates['d']|| keyStates['D'])
+	if (keyStates['d'])
 	{
 		x += 2;
 		int x2Quadrant = (int)((x + 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at(x2Quadrant).at((int)y / squareSize))
+		if (!map.bitmap.at(x2Quadrant).at((int)y / squareSize))
 		{
 			xIncrement += 2 / squareSize;
 			rotation = 0;
+
+			//camera direction set
+			zz = viewer[2];
+			xx = viewer[0] + 10;
+
+			//camera location set
+			viewer[0] += 0.2;
+			xx += 0.2;
+
 		}
 	}
-	if (keyStates['w']|| keyStates['W'])
+	if (keyStates['w'])
 	{
 		y -= 2;
 		int y1Quadrant = (int)((y - 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at((int)x / squareSize).at(y1Quadrant))
+		if (!map.bitmap.at((int)x / squareSize).at(y1Quadrant))
 		{
 			yIncrement -= 2 / squareSize;
 			rotation = 3;
+
+			//camera direction set
+			zz = viewer[2] - 10;
+			xx = viewer[0];
+
+			//camera location set
+			viewer[2] -= 0.2;
+			zz -= 0.2;
 		}
 	}
-	if (keyStates['s']|| keyStates['S'])
+	if (keyStates['s'])
 	{
 		y += 2;
 		int y2Quadrant = (int)((y + 16.0 *cos(360 * M_PI / 180.0)) / squareSize);
-		if (!bitmap.at((int)x / squareSize).at(y2Quadrant))
+		if (!map.bitmap.at((int)x / squareSize).at(y2Quadrant))
 		{
 			yIncrement += 2 / squareSize;
 			rotation = 1;
+
+			//camera direction set
+			zz = viewer[2] + 10;
+			xx = viewer[0];
+
+			//camera location set
+			viewer[2] += 0.2;
+			zz += 0.2;
 		}
 	}
 	if (keyStates[' '])
@@ -287,9 +334,6 @@ void keyOperations()
 			replay = false;
 		}
 	}
-	if (keyStates[27])
-		exit(-1);
-	
 }
 
 //Method to check if the game is over
@@ -314,9 +358,21 @@ void gameOver()
 	{
 		over = true;
 	}
-	if (points == 106)
+
+	//Points are different when you eat by level.
+	if (map.level == 2)
 	{
-		over = true;
+		if (points == 74)
+		{
+			map.level = 3;
+			//over = true;
+			resetGame(); //Go to Level 3
+		}
+	}
+	if (map.level == 3)
+	{
+		if (points == 106)
+		    over = true;
 	}
 	if (!over)
 	{
@@ -435,18 +491,27 @@ void welcomeScreen()
 //Method to display the screen and its elements
 void display()
 {
+	glViewport(0, 0, ww / 2, hh);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-5, 5, 5, -5, 2, 20);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Left screen(3D and first person view)
 	glLoadIdentity();
-	gluLookAt(viewer[0], viewer[1], viewer[2], 0, 0, 0, 0, 1, 0);
+	gluLookAt(viewer[0], viewer[1], viewer[2], xx, yy, zz, 0, 1, 0);
 
 	if (points == 1)
 	{
 		over = false;
 	}
-	gameOver();
+
 	keyOperations();
+
+	gameOver();
 
 	//Increaseing the degree of pacman's mouth
 	angle += angle_Increment; //angle's range is 0~45degree
@@ -464,6 +529,11 @@ void display()
 	{
 		if (!over)
 		{
+			glPushMatrix();
+
+			glRotated(90, 1, 0, 0);
+			glScalef(0.1, 0.1, 0.1);
+			glTranslated(-375, -375, -5);
 			map.drawFloor();
 			map.drawLabyrinth();
 			pacman.setPacman(1.5 + xIncrement, 1.5 + yIncrement, angle);
@@ -481,35 +551,60 @@ void display()
 			Clyde.drawGhost(1.0, 0.3, 0.0); //orange
 			Pinky.drawGhost(1.0, 0.0, 0.6); //magenta
 
+			glPopMatrix();
 			Sleep(10);
 			playSound(1);
 		}
 		else
 		{
+			glLoadIdentity();
+			gluLookAt(0, 0, 10, 0.7, 0, 0, 0, 1, 0);
+			glPushMatrix();
+			glScalef(0.1, 0.1, 0.1);
+			glTranslated(-75, -350, -1);
 			playSound(3);
 			resultsDisplay();
+			glPopMatrix();
 		}
 	}
 	else
 	{
+		glLoadIdentity();
+		gluLookAt(0, 0, 10, 2, 0, 0, 0, 1, 0);
+		glPushMatrix();
+		glScalef(0.1, 0.1, 0.1);
+		glTranslated(-50, -300, -1);
 		welcomeScreen();
+		glPopMatrix();
 	}
 
 	//Right screen(2D(Actually draw 3D, so I think it may be modified) and third person view)
 	glPushMatrix(); //Save root
 
+	glViewport(ww / 2, 0, ww, hh);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, 750 * 2, 750, 0, -750, 750);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0); //Fixed the viewer
 
-	glTranslatef(750, 0, 0); //Move by 750 on the x axis
+	//Scaling by level
+	if (map.level == 2)
+		glScalef(15.0 / 13.0, 15.0 / 13.0, 1); //13 by 13
 
+    else if(map.level == 3)
+		glScalef(1, 1, 1); //15 by 15
+	
 	if (points == 1)
 	{
 		over = false;
 	}
 
-	gameOver();
 	keyOperations();
+
+	gameOver();
+
 
 	if (replay)
 	{
@@ -537,6 +632,7 @@ void display()
 		}
 	}
 
+
 	glPopMatrix(); //Go to Root
 
 	glutSwapBuffers();
@@ -545,13 +641,8 @@ void display()
 //Methdo to reshape the game is the screen size changes
 void reshape(int w, int h)
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glOrtho(0, 750 * 2, 750, 0, -750, 750);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	ww = w;
+	hh = h;
 }
 
 
@@ -565,13 +656,13 @@ int main(int argc, char** argv)
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("PACMAN - by Patricia Terol");
 
+
 	//define all the control functions
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutIdleFunc(display);
 	glutKeyboardFunc(keyPressed);
 	glutKeyboardUpFunc(keyUp);
-
 	//run the game
 	glEnable(GL_DEPTH_TEST);
 	init();
