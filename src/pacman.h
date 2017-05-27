@@ -14,6 +14,7 @@ private:
 public:
 	float x, y;
 	float mouth_angle;
+	float life;
 
 	Pacman();
 	~Pacman();
