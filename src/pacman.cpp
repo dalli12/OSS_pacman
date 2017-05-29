@@ -6,6 +6,7 @@ Pacman::Pacman()
 	this->x = 0;
 	this->y = 0;
 	this->mouth_angle = 0.0;
+	this->life = 3;
 }
 
 Pacman::~Pacman()

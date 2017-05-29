@@ -63,6 +63,8 @@ bool* keyStates = new bool[256]; // record of all keys pressed
 int points = 0; // total points collected
 GLdouble viewer[] = { 0, 0, 1 }; // initial viewer location
 
+int died = 0;//count died number of time
+
 void viewerInit()
 {
 	viewer[0] = -30;
@@ -563,6 +565,10 @@ void display()
 			glPopMatrix();
 			Sleep(10);
 			playSound(1);
+
+			if (died == 1)pacman.life = 2;
+			if (died == 2)pacman.life = 1;
+			if (died == 3)pacman.life = 0;
 		}
 		else
 		{
@@ -574,6 +580,9 @@ void display()
 			playSound(3);
 			resultsDisplay();
 			glPopMatrix();
+			if (pacman.life == 3)died = 1;
+			if (pacman.life == 2)died = 2;
+			if (pacman.life == 1)died = 3;
 		}
 	}
 	else
@@ -628,6 +637,27 @@ void display()
 			points = dot.getPoint();
 			pacman.drawPacman(rotation);
 
+			glPushMatrix();
+			glColor3f(1.0, 1.0, 0.0);
+			if (pacman.life >= 1)
+			{
+				glTranslatef(squareSize - 20, squareSize - 25, 60);
+				glutSolidSphere(10, 50, 50);
+
+				if (pacman.life >= 2)
+				{
+					glTranslatef(30, 0, 0);
+					glutSolidSphere(10, 50, 50);
+
+					if (pacman.life >= 3)
+					{
+						glTranslatef(30, 0, 0);
+						glutSolidSphere(10, 50, 50);
+
+					}
+				}
+			}
+
 			//print score
 			glPushMatrix();
 			char *message = "point :";
@@ -643,6 +673,7 @@ void display()
 			glRasterPos3f(520, 30, 60);
 			while (*message)
 				glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
+
 			glPopMatrix();
 
 			updateGhost(&Blinky);
