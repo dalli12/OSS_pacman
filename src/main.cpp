@@ -790,6 +790,23 @@ void display()
 			points = dot.getPoint();
 			pacman.drawPacman2D(rotation);
 
+			//print score
+			glPushMatrix();
+			char *message = "point :";
+			glColor3f(0, 0, 0);
+			if (map.level == 2)glScalef(15.0 / 13.0, 15.0 / 13.0, 1);
+			if (map.level == 3)glScalef(15.0 / 11.0, 15.0 / 11.0, 1);
+			glRasterPos3f(480, 30, 60);
+			while (*message)
+				glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
+
+			string result = to_string(points);
+			message = (char*)result.c_str();
+			glRasterPos3f(520, 30, 60);
+			while (*message)
+				glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *message++);
+			glPopMatrix();
+
 			updateGhost(&Blinky);
 			updateGhost(&Inky);
 			updateGhost(&Clyde);
